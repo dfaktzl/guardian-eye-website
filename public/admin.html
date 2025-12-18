@@ -542,7 +542,7 @@
             btn.innerHTML = `<span class="animate-spin mr-1">⌛</span> Thinking...`;
             btn.disabled = true;
             outputDiv.classList.remove('hidden');
-            outputDiv.innerHTML = '<span class="text-slate-400 italic">Waking up the AI...</span>';
+            outputDiv.innerHTML = '<span class="text-slate-400 italic">Connecting to Gemini...</span>';
 
             let prompt = "";
             if (type === 'draft') {
@@ -550,15 +550,13 @@
                 Write a polite, professional, and concise email reply to a customer named ${data.firstName} ${data.lastName}.
                 They are interested in '${data.serviceType}'.
                 Their message was: "${data.message}".
-                Please make sure to apologise for being merely AI and not what they wanted (a human response)
                 
                 The reply should:
-                0. Most importamtly concisely remind them that this is merely a reply while waiting for a human to reply properly.
                 1. Thank them for contacting Guardian Eye.
                 2. Acknowledge their specific interest in ${data.serviceType}.
                 3. Address any specific points in their message.
                 4. Invite them to a free site assessment or a call at 0451 289 783.
-                5. Sign off as 'The Team @ Guardian Eye'.
+                5. Sign off as 'The Guardian Eye Team'.
                 
                 Return ONLY the email body text.`;
             } else if (type === 'analyze') {

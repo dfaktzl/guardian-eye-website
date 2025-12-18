@@ -54,7 +54,7 @@
       "@id": "https://guardianeye.com.au",
       "url": "https://guardianeye.com.au",
       "telephone": "0451 289 783",
-      "email": "info@xfer.au",
+      "email": "info@guardianeye.live",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "338 Canning Hwy",
@@ -247,9 +247,9 @@
                 </nav>
 
                 <div class="hidden md:flex items-center gap-6">
-                    <a href="mailto:info@xfer.au" class="flex items-center gap-2 text-slate-700 hover:text-brand-blue transition text-sm font-semibold">
+                    <a href="mailto:info@guardianeye.live" class="flex items-center gap-2 text-slate-700 hover:text-brand-blue transition text-sm font-semibold">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="mail" class="lucide lucide-mail h-4 w-4"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"></path><rect x="2" y="4" width="20" height="16" rx="2"></rect></svg>
-                        info@xfer.au
+                        info@guardianeye.live
                     </a>
                     <a href="#contact" class="bg-brand-900 hover:bg-brand-800 text-white px-5 py-2.5 rounded-md text-sm font-medium transition shadow-md shadow-slate-900/10">
                         Get a Quote
@@ -270,8 +270,8 @@
                 <a href="#capabilities" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-brand-blue hover:bg-slate-50">Capabilities</a>
                 <a href="#contact" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-brand-blue hover:bg-slate-50">Contact</a>
                 <div class="mt-4 pt-4 border-t border-slate-100">
-                    <a href="mailto:info@xfer.au" class="flex items-center gap-2 px-3 py-2 text-brand-900 font-bold">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="mail" class="lucide lucide-mail h-4 w-4"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"></path><rect x="2" y="4" width="20" height="16" rx="2"></rect></svg> info@xfer.au
+                    <a href="mailto:info@guardianeye.live" class="flex items-center gap-2 px-3 py-2 text-brand-900 font-bold">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="mail" class="lucide lucide-mail h-4 w-4"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"></path><rect x="2" y="4" width="20" height="16" rx="2"></rect></svg> info@guardianeye.live
                     </a>
                 </div>
             </div>
@@ -459,7 +459,7 @@
                                 </div>
                                 <div>
                                     <p class="font-medium text-sm text-slate-300 uppercase tracking-wide">Email</p>
-                                    <a href="mailto:info@xfer.au" class="text-white hover:text-brand-blue transition">info@xfer.au</a>
+                                    <a href="mailto:info@guardianeye.live" class="text-white hover:text-brand-blue transition">info@guardianeye.live</a>
                                 </div>
                             </div>
                             <div class="flex items-start gap-4">
@@ -668,7 +668,7 @@
         onAuthStateChanged(auth, (user) => {
             if (user && !user.isAnonymous) {
                 // If logged in as admin, button redirects directly
-                adminBtn.onclick = () => window.location.href = 'admin.htm';
+                adminBtn.onclick = () => window.location.href = 'admin.html';
             } else {
                 // If not logged in, ensure anonymous auth for form submission
                 if(!user) signInAnonymously(auth).catch(console.error);
@@ -703,7 +703,7 @@
                     await signInWithEmailAndPassword(auth, email, password);
                 }
                 // Redirect to admin dashboard
-                window.location.href = 'admin.htm';
+                window.location.href = 'admin.htmll';
             } catch (error) {
                 console.error("Login error", error);
                 let msg = "Invalid credentials.";
@@ -720,7 +720,7 @@
             const provider = new GoogleAuthProvider();
             try {
                 await signInWithPopup(auth, provider);
-                window.location.href = 'admin.htm';
+                window.location.href = 'admin.htmll';
             } catch (error) {
                 console.error("Google Auth Error:", error);
                 loginError.textContent = "Google Sign-In failed. Ensure 'Google' provider is enabled in Firebase Console.";

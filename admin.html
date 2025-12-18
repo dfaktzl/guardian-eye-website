@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Guardian Eye</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Marked Library for rendering Markdown from Gemini -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%230ea5e9%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z%22/><path d=%22m9 12 2 2 4-4%22/></svg>">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            900: '#0f172a',
+                            blue: '#0ea5e9',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Markdown Styles for AI Output */
+        .prose p { margin-bottom: 0.5em; }
+        .prose ul { list-style-type: disc; padding-left: 1.2em; margin-bottom: 0.5em; }
+        .prose strong { font-weight: 600; color: #0f172a; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- ==================== LOGIN VIEW ==================== -->
+    <div id="login-view" class="min-h-screen flex flex-col items-center justify-center p-4">
+        <div class="max-w-md w-full bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden mb-8 z-10 relative">
+            <div class="bg-brand-900 p-6 text-center">
+                <div class="flex justify-center mb-4">
+                    <div class="bg-white/10 p-3 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lock text-brand-blue"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    </div>
+                </div>
+                <h2 class="text-2xl font-bold text-white">Admin Secure Login</h2>
+                <p class="text-slate-400 text-sm mt-1">Production Environment</p>
+            </div>
+            
+            <div class="p-8">
+                <form id="login-form" class="space-y-5">
+                    <!-- Google SSO Button -->
+                    <button type="button" id="google-login-btn" class="w-full flex items-center justify-center gap-3 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold py-2.5 rounded-lg transition duration-200 shadow-sm">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        </svg>
+                        Sign in with Google
+                    </button>
+
+                    <div class="relative flex py-1 items-center">
+                        <div class="flex-grow border-t border-slate-200"></div>
+                        <span class="flex-shrink-0 mx-4 text-slate-400 text-xs uppercase font-medium">Or continue with email</span>
+                        <div class="flex-grow border-t border-slate-200"></div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
+                        <input type="email" id="login-email" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-brand-blue outline-none transition" placeholder="admin@guardianeye.com.au">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
+                        <input type="password" id="login-password" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-brand-blue outline-none transition" placeholder="••••••••">
+                    </div>
+
+                    <div id="login-error" class="text-red-500 text-sm hidden bg-red-50 p-3 rounded-md border border-red-100 flex items-start gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-alert-circle shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y2="16"/></svg>
+                        <span id="login-error-text">Error message</span>
+                    </div>
+
+                    <button type="submit" class="w-full bg-brand-900 hover:bg-slate-800 text-white font-bold py-3 rounded-lg transition duration-300 shadow-lg shadow-slate-900/10">
+                        Authenticate
+                    </button>
+                    
+                </form>
+            </div>
+        </div>
+
+        <!-- Public Status Monitor (Visible on Login) -->
+        <div class="w-full max-w-4xl opacity-90">
+             <div class="bg-white/50 backdrop-blur-sm rounded-xl shadow-sm border border-slate-200/60 overflow-hidden">
+                <div class="px-6 py-3 border-b border-slate-200/60 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
+                        <h3 class="font-bold text-slate-600 text-xs uppercase tracking-wide">System Health Check</h3>
+                    </div>
+                    <span class="text-[10px] text-slate-400">Public Monitor</span>
+                </div>
+                <div class="p-6">
+                    <div class="system-status-grid flex flex-col gap-6">
+                         <span class="text-sm text-slate-400 italic">Checking network status...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== DASHBOARD VIEW ==================== -->
+    <div id="dashboard-view" class="hidden min-h-screen pb-12 flex flex-col">
+        <!-- Admin Header -->
+        <header class="bg-brand-900 text-white shadow-md fixed w-full z-50">
+            <div class="container mx-auto px-6 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check text-brand-blue"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                    <span class="font-bold text-lg tracking-tight">Guardian<span class="text-brand-blue">Eye</span> Admin</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span id="user-display" class="text-xs text-slate-300 hidden sm:block"></span>
+                    <button id="logout-btn" class="text-xs font-semibold bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded transition shadow-sm">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-6 pt-24 flex-grow">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-brand-900">Inquiry Inbox</h1>
+                    <p class="text-slate-500 text-sm mt-1">Real-time feed of contact form submissions.</p>
+                </div>
+                <div id="stats" class="text-sm font-semibold text-brand-blue bg-blue-50 px-4 py-2 rounded-lg border border-blue-100 shadow-sm">
+                    Connecting...
+                </div>
+            </div>
+
+            <!-- Inquiries Grid -->
+            <div id="inquiries-list" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-12">
+                <!-- Loading State -->
+                <div class="col-span-full flex flex-col items-center justify-center py-20 text-slate-400">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-blue mb-4"></div>
+                    <p>Syncing with secure database...</p>
+                </div>
+            </div>
+
+            <!-- System Status Monitor (Dashboard Version) -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-server text-brand-blue"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" x2="6.01" y1="6" y2="6"/><line x1="6" x2="6.01" y1="18" y2="18"/></svg>
+                    <h3 class="font-bold text-brand-900 text-sm uppercase tracking-wide">Internal Network Status</h3>
+                </div>
+                <div class="p-6">
+                    <div class="system-status-grid flex flex-col gap-6">
+                         <!-- Status Items injected here -->
+                         <span class="text-sm text-slate-400 italic">Initializing monitors...</span>
+                    </div>
+                    
+                    <div class="mt-6 flex gap-6 text-xs text-slate-400 border-t border-slate-100 pt-4">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-green-500"></span> Online
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-yellow-500"></span> Restricted (CORS)
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-red-500"></span> Offline
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, signInWithCustomToken, GoogleAuthProvider, signInWithPopup, signInAnonymously } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+        import { getFirestore, collection, onSnapshot, query, orderBy, doc, deleteDoc } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+
+        // 1. Initialize Firebase with PRODUCTION CONFIG
+        const firebaseConfig = {
+            apiKey: "AIzaSyAiv1neE4u8EHQHcQdGT_XIuP0ECmmb_Hw",
+            authDomain: "guardianeye-ca1b7.firebaseapp.com",
+            projectId: "guardianeye-ca1b7",
+            storageBucket: "guardianeye-ca1b7.firebasestorage.app",
+            messagingSenderId: "889057794722",
+            appId: "1:889057794722:web:3bf17697bde0a54ec795fb",
+            measurementId: "G-3PT1TGTS6V"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = "guardianeye-ca1b7"; 
+        
+        // -------------------------------------------------------------
+        // Gemini API Key for AI features
+        // -------------------------------------------------------------
+        const apiKey = "AIzaSyA-7Ya8OCkPAFEYiSbNe-fJVxctEyw-pqY"; 
+
+        // -------------------------------------------------------------
+        // SECURITY: Whitelisted Admin Emails (Case Insensitive)
+        // -------------------------------------------------------------
+        const ALLOWED_ADMINS = [
+            "admin@guardianeye.live", 
+            "defaktz@gmail.com", 
+            "mickala.wainwright@gmail.com"
+        ].map(e => e.toLowerCase());
+
+        // 2. UI Elements
+        const loginView = document.getElementById('login-view');
+        const dashboardView = document.getElementById('dashboard-view');
+        const loginForm = document.getElementById('login-form');
+        const logoutBtn = document.getElementById('logout-btn');
+        const listElement = document.getElementById('inquiries-list');
+        const statsElement = document.getElementById('stats');
+        const loginError = document.getElementById('login-error');
+        const loginErrorText = document.getElementById('login-error-text');
+        const userDisplay = document.getElementById('user-display');
+        const googleLoginBtn = document.getElementById('google-login-btn');
+
+        // --- SYSTEM STATUS MONITOR CONFIGURATION ---
+        const monitoredSystems = [
+            {
+                category: "Core Infrastructure",
+                items: [
+                    { name: 'Firebase Database', ip: 'firebase', type: 'simulation' },
+                    { name: 'Google DNS (8.8.4.4)', ip: '8.8.4.4', type: 'imagePing' }, 
+                    { name: 'Cloudflare (1.1.1.1)', ip: '1.1.1.1', type: 'imagePing' },
+                    { name: 'Main Office Router', ip: '192.168.1.1', type: 'imagePing' }
+                ]
+            },
+            {
+                category: "Physical Security Devices",
+                items: [
+                    { name: 'Lobby Camera (Cam 01)', ip: '192.168.1.51', type: 'imagePing' },
+                    { name: 'Rear Exit (Cam 04)', ip: '192.168.1.54', type: 'imagePing' },
+                    { name: 'Server Room Access', ip: '192.168.1.200', type: 'imagePing' },
+                    { name: 'NVR Storage Unit', ip: '192.168.1.10', type: 'imagePing' }
+                ]
+            }
+        ];
+
+        // 3. Auth Logic
+        const initAuth = async () => {
+             if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                try {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } catch(e) { console.error("Token Auth Failed", e); }
+            }
+        };
+        initAuth();
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user && !user.isAnonymous) {
+                // SECURITY CHECK: Is this user allowed?
+                const email = user.email.toLowerCase();
+                if (!ALLOWED_ADMINS.includes(email) && ALLOWED_ADMINS.length > 0) {
+                    console.warn("Unauthorized access attempt by:", email);
+                    await signOut(auth);
+                    loginErrorText.textContent = "Access Denied: You are not an authorized administrator.";
+                    loginError.classList.remove('hidden');
+                    return;
+                }
+
+                console.log("Admin Logged In:", email);
+                userDisplay.textContent = email || user.displayName || 'Admin';
+                
+                loginView.classList.add('hidden');
+                dashboardView.classList.remove('hidden');
+                
+                startListeningForData();
+            } else {
+                // Logged out
+                loginView.classList.remove('hidden');
+                dashboardView.classList.add('hidden');
+                listElement.innerHTML = ''; 
+            }
+            // Always check health, even on login screen
+            checkSystemHealth();
+        });
+
+        // Google Sign In Logic
+        googleLoginBtn.addEventListener('click', async () => {
+            const provider = new GoogleAuthProvider();
+            try {
+                await signInWithPopup(auth, provider);
+                // onAuthStateChanged handles the rest
+            } catch (error) {
+                console.error("Google Auth Error:", error);
+                loginErrorText.textContent = "Google Sign-In failed. Ensure 'Google' provider is enabled in Firebase Console.";
+                loginError.classList.remove('hidden');
+            }
+        });
+
+        // 4. Data Listener
+        let unsubscribeSnapshot = null;
+
+        function startListeningForData() {
+            if(unsubscribeSnapshot) return; 
+
+            // Use the Project ID in the path as per your custom rules
+            const q = collection(db, 'artifacts', appId, 'public', 'data', 'contact_inquiries');
+
+            unsubscribeSnapshot = onSnapshot(q, (snapshot) => {
+                if (snapshot.empty) {
+                    listElement.innerHTML = `
+                        <div class="col-span-full flex flex-col items-center justify-center py-24 text-slate-500 bg-white/50 rounded-3xl border-4 border-dotted border-slate-200">
+                            <div class="bg-white p-6 rounded-full shadow-sm mb-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-inbox text-brand-blue/60"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+                            </div>
+                            <h3 class="text-3xl font-bold text-slate-700 tracking-tight">All Caught Up!</h3>
+                            <p class="text-lg text-slate-400 mt-2 font-medium">Inbox is empty. Listening for new leads...</p>
+                        </div>
+                    `;
+                    statsElement.innerText = "0 Messages";
+                    return;
+                }
+
+                statsElement.innerText = `${snapshot.docs.length} Active Message${snapshot.docs.length === 1 ? '' : 's'}`;
+                listElement.innerHTML = ''; 
+
+                const sortedDocs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+                                               .sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+
+                sortedDocs.forEach(data => {
+                    const card = createInquiryCard(data);
+                    listElement.appendChild(card);
+                });
+                lucide.createIcons();
+            }, (error) => {
+                console.error("Data Fetch Error:", error);
+                if(error.code === 'permission-denied') {
+                    statsElement.innerText = "Access Denied";
+                }
+            });
+        }
+
+        // --- STATUS MONITOR LOGIC (Parallel & Fast) ---
+        function checkSystemHealth() {
+            const grids = document.querySelectorAll('.system-status-grid');
+            let allCategoriesHtml = '';
+            const pendingChecks = [];
+
+            // 1. Synchronously build the HTML Skeleton with "Checking" state
+            monitoredSystems.forEach((group, gIndex) => {
+                let groupHtml = `
+                    <div class="w-full flex items-center gap-3 pb-2 pt-2 first:pt-0">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">${group.category}</span>
+                        <div class="h-px bg-slate-200 flex-grow"></div>
+                    </div>
+                    <div class="flex flex-wrap gap-3 w-full mb-4">
+                `;
+
+                group.items.forEach((sys, iIndex) => {
+                    const uniqueKey = `status-${gIndex}-${iIndex}`;
+                    
+                    groupHtml += `
+                        <div data-status-key="${uniqueKey}" class="flex items-center gap-3 px-4 py-3 rounded-lg border bg-slate-50 border-slate-200 shadow-sm transition-all duration-300 flex-grow sm:flex-grow-0 min-w-[180px]">
+                            <span class="relative flex h-3 w-3 shrink-0">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-slate-500"></span>
+                            </span>
+                            <div class="flex flex-col overflow-hidden">
+                                <span class="text-xs font-bold text-slate-700 uppercase tracking-wide truncate">${sys.name}</span>
+                                <div class="flex justify-between gap-2">
+                                    <span class="text-[10px] text-slate-400 font-mono truncate">${sys.ip}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Queue the async check for later
+                    pendingChecks.push(() => runCheck(sys, uniqueKey));
+                });
+                groupHtml += `</div>`;
+                allCategoriesHtml += groupHtml;
+            });
+
+            // 2. Inject Skeleton into DOM (Instant User Feedback)
+            grids.forEach(grid => grid.innerHTML = allCategoriesHtml);
+
+            // 3. Fire all checks in parallel (No awaiting here!)
+            setTimeout(() => {
+                pendingChecks.forEach(checkFn => checkFn());
+            }, 50);
+        }
+
+        async function runCheck(sys, key) {
+            let status = 'offline';
+            
+            if (sys.type === 'simulation') {
+                // Randomized fast delay for realism (50ms - 400ms)
+                await new Promise(r => setTimeout(r, Math.random() * 350 + 50));
+                status = 'online';
+            } else {
+                status = await pingImage(sys.ip);
+            }
+
+            // Update DOM Elements
+            const targets = document.querySelectorAll(`[data-status-key="${key}"]`);
+            
+            targets.forEach(div => {
+                let statusClasses = "";
+                let dotColor = "";
+                let statusText = "";
+                let statusTextColor = "";
+
+                if (status === 'online') {
+                    statusClasses = "bg-white border-green-200 shadow-sm";
+                    dotColor = "bg-green-500";
+                    statusText = "Verified";
+                    statusTextColor = "text-green-600";
+                } else if (status === 'restricted') {
+                    statusClasses = "bg-yellow-50 border-yellow-200";
+                    dotColor = "bg-yellow-500";
+                    statusText = "Restricted";
+                    statusTextColor = "text-yellow-600";
+                } else {
+                    statusClasses = "bg-red-50 border-red-100";
+                    dotColor = "bg-red-500";
+                    statusText = "Offline";
+                    statusTextColor = "text-red-400";
+                }
+
+                // Replace content
+                div.innerHTML = `
+                    <span class="relative flex h-3 w-3 shrink-0">
+                        ${status === 'online' ? '<span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 '+dotColor+'"></span>' : ''}
+                        <span class="relative inline-flex rounded-full h-3 w-3 ${dotColor}"></span>
+                    </span>
+                    <div class="flex flex-col overflow-hidden">
+                        <span class="text-xs font-bold text-slate-700 uppercase tracking-wide truncate">${sys.name}</span>
+                        <div class="flex justify-between gap-2">
+                            <span class="text-[10px] ${statusTextColor} font-mono font-medium">${statusText}</span>
+                        </div>
+                    </div>
+                `;
+                
+                // Update classes
+                div.className = `flex items-center gap-3 px-4 py-3 rounded-lg border transition-all duration-300 flex-grow sm:flex-grow-0 min-w-[180px] ${statusClasses}`;
+            });
+        }
+
+        function pingImage(ip) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                let settled = false;
+                
+                if(ip === 'firebase') {
+                    // Quick check for Google services
+                    img.src = `https://www.google.com/favicon.ico?${Date.now()}`;
+                } else {
+                    img.src = `http://${ip}/favicon.ico?${Date.now()}`;
+                }
+
+                img.onload = () => { if(!settled) { settled = true; resolve('online'); } };
+                img.onerror = () => { if(!settled) { settled = true; resolve('restricted'); } };
+                
+                setTimeout(() => {
+                    if(!settled) { settled = true; img.src = ""; resolve('offline'); }
+                }, 3000); 
+            });
+        }
+
+        function createInquiryCard(data) {
+            const date = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleString() : 'Just now';
+            const techInfo = data.meta ? `
+                <div class="mt-4 pt-3 border-t border-slate-100 text-[10px] text-slate-400 font-mono">
+                    <p><strong>Ref:</strong> ${escapeHtml(data.meta.referrer)}</p>
+                    <p><strong>Device:</strong> ${escapeHtml(data.meta.platform || 'Unknown')}</p>
+                </div>
+            ` : '';
+
+            const card = document.createElement('div');
+            card.className = "bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition duration-200 flex flex-col relative group";
+            
+            card.innerHTML = `
+                <div class="flex justify-between items-start mb-4 border-b border-slate-100 pb-4">
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-lg">${escapeHtml(data.firstName)} ${escapeHtml(data.lastName)}</h3>
+                        <div class="flex items-center gap-1.5 text-sm text-slate-500 mt-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/></svg>
+                            <a href="mailto:${escapeHtml(data.email)}" class="hover:text-brand-blue transition">${escapeHtml(data.email)}</a>
+                        </div>
+                    </div>
+                    <span class="text-xs font-medium text-slate-400 bg-slate-100 px-2 py-1 rounded whitespace-nowrap">${date}</span>
+                </div>
+                
+                <div class="mb-4">
+                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-sky-50 text-brand-blue mb-2 border border-sky-100">
+                         ${escapeHtml(data.serviceType || 'General Inquiry')}
+                    </span>
+                    <div class="text-slate-600 text-sm leading-relaxed whitespace-pre-wrap bg-slate-50 p-3 rounded-lg border border-slate-100 min-h-[80px]">${escapeHtml(data.message)}</div>
+                    
+                    <!-- AI Section -->
+                    <div class="mt-3 pt-3 border-t border-slate-100">
+                         <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2 flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles text-amber-500"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                            Gemini AI Assistant
+                         </h4>
+                         <div class="flex flex-wrap gap-2">
+                            <button class="ai-draft-btn flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-md transition border border-indigo-100">
+                                <span>✨ Draft Reply</span>
+                            </button>
+                            <button class="ai-analyze-btn flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-md transition border border-emerald-100">
+                                <span>✨ Analyze Intent</span>
+                            </button>
+                         </div>
+                         <div class="ai-output mt-3 hidden text-sm text-slate-700 bg-white p-3 rounded border border-slate-200 shadow-inner prose prose-sm max-w-none"></div>
+                    </div>
+
+                    ${techInfo}
+                </div>
+
+                <div class="mt-auto pt-4 flex justify-between items-center border-t border-slate-100">
+                     <a href="mailto:${escapeHtml(data.email)}?subject=Guardian Eye: Regarding your inquiry about ${escapeHtml(data.serviceType)}" class="text-brand-blue hover:text-sky-700 text-sm font-medium transition flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-reply"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg>
+                        Reply via Email
+                    </a>
+                    <span class="text-xs text-slate-300">ID: ${data.userId ? data.userId.substring(0,4) : '...' }</span>
+                </div>
+            `;
+
+            const outputDiv = card.querySelector('.ai-output');
+            const draftBtn = card.querySelector('.ai-draft-btn');
+            const analyzeBtn = card.querySelector('.ai-analyze-btn');
+
+            draftBtn.addEventListener('click', () => handleAiAction(draftBtn, outputDiv, 'draft', data));
+            analyzeBtn.addEventListener('click', () => handleAiAction(analyzeBtn, outputDiv, 'analyze', data));
+
+            return card;
+        }
+
+        async function handleAiAction(btn, outputDiv, type, data) {
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<span class="animate-spin mr-1">⌛</span> Thinking...`;
+            btn.disabled = true;
+            outputDiv.classList.remove('hidden');
+            outputDiv.innerHTML = '<span class="text-slate-400 italic">Waking up the AI...</span>';
+
+            let prompt = "";
+            if (type === 'draft') {
+                prompt = `You are a helpful support agent for 'Guardian Eye Monitoring', a security company in Perth, WA. 
+                Write a polite, professional, and concise email reply to a customer named ${data.firstName} ${data.lastName}.
+                They are interested in '${data.serviceType}'.
+                Their message was: "${data.message}".
+                Please make sure to apologise for being merely AI and not what they wanted (a human response)
+                
+                The reply should:
+                0. Most importamtly concisely remind them that this is merely a reply while waiting for a human to reply properly.
+                1. Thank them for contacting Guardian Eye.
+                2. Acknowledge their specific interest in ${data.serviceType}.
+                3. Address any specific points in their message.
+                4. Invite them to a free site assessment or a call at 0451 289 783.
+                5. Sign off as 'The Team @ Guardian Eye'.
+                
+                Return ONLY the email body text.`;
+            } else if (type === 'analyze') {
+                prompt = `Analyze this security inquiry from ${data.firstName}: "${data.message}" regarding ${data.serviceType}.
+                Provide a structured summary with these 3 headers:
+                1. **Sentiment**: (e.g., Anxious, Curious, Frustrated, Ready to Buy)
+                2. **Urgency**: (Low, Medium, High - explain why)
+                3. **Recommended Action**: (e.g., Call immediately, Send brochure, Schedule technician)
+                Keep it concise.`;
+            }
+
+            try {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                const payload = { contents: [{ parts: [{ text: prompt }] }] };
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) throw new Error(`Gemini API Error: ${response.statusText}`);
+                const data = await response.json();
+                const responseText = data.candidates[0].content.parts[0].text;
+
+                if (type === 'draft') {
+                    outputDiv.innerHTML = `
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-xs font-bold text-indigo-600">Draft Response:</span>
+                            <button class="text-xs text-slate-400 hover:text-brand-blue" onclick="navigator.clipboard.writeText(this.nextElementSibling.value)">Copy</button>
+                        </div>
+                        <textarea class="w-full h-48 text-sm p-2 border border-slate-300 rounded focus:ring-2 focus:ring-brand-blue focus:border-transparent" spellcheck="false">${responseText}</textarea>
+                    `;
+                } else {
+                    outputDiv.innerHTML = marked.parse(responseText);
+                }
+            } catch (error) {
+                console.error(error);
+                outputDiv.innerHTML = `<span class="text-red-500 text-sm">Error generating content. Please try again.</span>`;
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            // No registration checkbox in production
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerText;
+
+            loginError.classList.add('hidden');
+            btn.disabled = true;
+            btn.innerText = "Authenticating...";
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                // onAuthStateChanged will handle the redirect
+            } catch (error) {
+                console.error("Login Error:", error);
+                let msg = "Unknown Error";
+                if(error.code === 'auth/invalid-credential') msg = "Invalid Email or Password.";
+                else if(error.code === 'auth/email-already-in-use') msg = "Email already registered.";
+                else if(error.code === 'auth/weak-password') msg = "Password too weak (6+ chars required).";
+                else if(error.code === 'auth/user-not-found') msg = "No user found.";
+                else if(error.code === 'auth/operation-not-allowed') msg = "Email/Password login is not enabled in Firebase Console.";
+                loginErrorText.textContent = msg;
+                loginError.classList.remove('hidden');
+                btn.disabled = false;
+                btn.innerText = originalText;
+            }
+        });
+
+        logoutBtn.addEventListener('click', () => {
+            if(confirm('Are you sure you want to logout?')) {
+                signOut(auth);
+            }
+        });
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>

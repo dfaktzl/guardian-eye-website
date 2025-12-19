@@ -531,8 +531,11 @@
             const draftBtn = card.querySelector('.ai-draft-btn');
             const analyzeBtn = card.querySelector('.ai-analyze-btn');
 
-            draftBtn.addEventListener('click', () => handleAiAction(draftBtn, outputDiv, 'draft', data));
-            analyzeBtn.addEventListener('click', () => handleAiAction(analyzeBtn, outputDiv, 'analyze', data));
+            // --- EVENT LISTENERS (Standard & Safe) ---
+            // Because we are creating the elements here and preserving the scope of 'data',
+            // standard addEventListener is preferred over global delegation.
+            if(draftBtn) draftBtn.addEventListener('click', () => handleAiAction(draftBtn, outputDiv, 'draft', data));
+            if(analyzeBtn) analyzeBtn.addEventListener('click', () => handleAiAction(analyzeBtn, outputDiv, 'analyze', data));
 
             return card;
         }
@@ -569,16 +572,28 @@
             }
 
             try {
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                // FIXED: Changed model to standard 'gemini-1.5-flash' which is stable.
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
                 const payload = { contents: [{ parts: [{ text: prompt }] }] };
+                
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-                if (!response.ok) throw new Error(`Gemini API Error: ${response.statusText}`);
-                const data = await response.json();
-                const responseText = data.candidates[0].content.parts[0].text;
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Gemini API Error (${response.status}): ${errorText}`);
+                }
+                
+                const responseData = await response.json();
+                
+                if(!responseData.candidates || !responseData.candidates[0].content) {
+                     throw new Error("Invalid response format from Gemini.");
+                }
+
+                const responseText = responseData.candidates[0].content.parts[0].text;
 
                 if (type === 'draft') {
                     outputDiv.innerHTML = `
@@ -592,8 +607,14 @@
                     outputDiv.innerHTML = marked.parse(responseText);
                 }
             } catch (error) {
-                console.error(error);
-                outputDiv.innerHTML = `<span class="text-red-500 text-sm">Error generating content. Please try again.</span>`;
+                console.error("AI Error:", error);
+                // Display friendly error in UI
+                outputDiv.innerHTML = `
+                    <div class="p-3 bg-red-50 border border-red-100 rounded text-xs text-red-600">
+                        <strong>Error:</strong> ${error.message}<br>
+                        <span class="opacity-75">Check console for details.</span>
+                    </div>
+                `;
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;

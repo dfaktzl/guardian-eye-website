@@ -668,7 +668,7 @@
         onAuthStateChanged(auth, (user) => {
             if (user && !user.isAnonymous) {
                 // If logged in as admin, button redirects directly
-                adminBtn.onclick = () => window.location.href = 'admin.html';
+                adminBtn.onclick = () => window.location.href = 'admin.htmll';
             } else {
                 // If not logged in, ensure anonymous auth for form submission
                 if(!user) signInAnonymously(auth).catch(console.error);
@@ -703,7 +703,7 @@
                     await signInWithEmailAndPassword(auth, email, password);
                 }
                 // Redirect to admin dashboard
-                window.location.href = 'admin.htmll';
+                window.location.href = 'admin.htmlll';
             } catch (error) {
                 console.error("Login error", error);
                 let msg = "Invalid credentials.";
@@ -720,7 +720,7 @@
             const provider = new GoogleAuthProvider();
             try {
                 await signInWithPopup(auth, provider);
-                window.location.href = 'admin.htmll';
+                window.location.href = 'admin.htmlll';
             } catch (error) {
                 console.error("Google Auth Error:", error);
                 loginError.textContent = "Google Sign-In failed. Ensure 'Google' provider is enabled in Firebase Console.";

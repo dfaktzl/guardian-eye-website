@@ -531,8 +531,11 @@
             const draftBtn = card.querySelector('.ai-draft-btn');
             const analyzeBtn = card.querySelector('.ai-analyze-btn');
 
-            draftBtn.addEventListener('click', () => handleAiAction(draftBtn, outputDiv, 'draft', data));
-            analyzeBtn.addEventListener('click', () => handleAiAction(analyzeBtn, outputDiv, 'analyze', data));
+            // --- EVENT LISTENERS (Standard & Safe) ---
+            // Because we are creating the elements here and preserving the scope of 'data',
+            // standard addEventListener is preferred over global delegation.
+            if(draftBtn) draftBtn.addEventListener('click', () => handleAiAction(draftBtn, outputDiv, 'draft', data));
+            if(analyzeBtn) analyzeBtn.addEventListener('click', () => handleAiAction(analyzeBtn, outputDiv, 'analyze', data));
 
             return card;
         }
@@ -568,18 +571,59 @@
                 Keep it concise.`;
             }
 
-            try {
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-                const payload = { contents: [{ parts: [{ text: prompt }] }] };
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                if (!response.ok) throw new Error(`Gemini API Error: ${response.statusText}`);
-                const data = await response.json();
-                const responseText = data.candidates[0].content.parts[0].text;
+            // --- MODEL FALLBACK LOGIC ---
+            // If the main model isn't enabled for this key, we fallback to older/stable models.
+            const modelsToTry = [
+                'gemini-1.5-flash', 
+                'gemini-1.5-flash-001', 
+                'gemini-1.5-flash-002',
+                'gemini-pro' // Safest fallback for older setups
+            ];
 
+            let responseText = null;
+            let lastError = null;
+
+            try {
+                for (const modelName of modelsToTry) {
+                    try {
+                        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+                        const payload = { contents: [{ parts: [{ text: prompt }] }] };
+
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!response.ok) {
+                            if (response.status === 404) {
+                                console.warn(`Model ${modelName} not found (404), trying next...`);
+                                continue; // Try next model
+                            }
+                            const errorText = await response.text();
+                            throw new Error(`Gemini API Error (${response.status}): ${errorText}`);
+                        }
+
+                        const responseData = await response.json();
+                        if(!responseData.candidates || !responseData.candidates[0].content) {
+                             throw new Error("Invalid response format from Gemini.");
+                        }
+
+                        responseText = responseData.candidates[0].content.parts[0].text;
+                        break; // Success! Stop loop.
+
+                    } catch (e) {
+                        lastError = e;
+                        // If it's a 404/Not Found, loop continues. If other error, we might want to break or continue depending on severity.
+                        // For now, we continue if possible, unless it's the last one.
+                    }
+                }
+
+                if (!responseText) {
+                    throw lastError || new Error("All AI models failed to respond.");
+                }
+
+                // Render Success
                 if (type === 'draft') {
                     outputDiv.innerHTML = `
                         <div class="flex justify-between items-center mb-1">
@@ -591,9 +635,15 @@
                 } else {
                     outputDiv.innerHTML = marked.parse(responseText);
                 }
+
             } catch (error) {
-                console.error(error);
-                outputDiv.innerHTML = `<span class="text-red-500 text-sm">Error generating content. Please try again.</span>`;
+                console.error("AI Error:", error);
+                outputDiv.innerHTML = `
+                    <div class="p-3 bg-red-50 border border-red-100 rounded text-xs text-red-600">
+                        <strong>AI Assistant Unavailable</strong><br>
+                        <span class="opacity-75">Could not connect to Google Gemini. (${error.message})</span>
+                    </div>
+                `;
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;

@@ -247,14 +247,9 @@
         ];
 
         // 3. Auth Logic
-        const initAuth = async () => {
-             if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                try {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } catch(e) { console.error("Token Auth Failed", e); }
-            }
-        };
-        initAuth();
+        // REMOVED initAuth() that used __initial_auth_token.
+        // Reason: The token provided by the environment does not match the hardcoded Production Project ID,
+        // triggering a "custom-token-mismatch" error. Users must log in manually.
 
         onAuthStateChanged(auth, async (user) => {
             if (user && !user.isAnonymous) {

@@ -33,6 +33,9 @@
         .prose p { margin-bottom: 0.5em; }
         .prose ul { list-style-type: disc; padding-left: 1.2em; margin-bottom: 0.5em; }
         .prose strong { font-weight: 600; color: #0f172a; }
+        
+        /* Transition for view switching */
+        .view-section { transition: opacity 0.3s ease-in-out; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
@@ -115,9 +118,16 @@
         <!-- Admin Header -->
         <header class="bg-brand-900 text-white shadow-md fixed w-full z-50">
             <div class="container mx-auto px-6 h-16 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check text-brand-blue"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
-                    <span class="font-bold text-lg tracking-tight">Guardian<span class="text-brand-blue">Eye</span> Admin</span>
+                <div class="flex items-center gap-8">
+                    <div class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check text-brand-blue"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                        <span class="font-bold text-lg tracking-tight">Guardian<span class="text-brand-blue">Eye</span> Admin</span>
+                    </div>
+                    <!-- Navigation Tabs -->
+                    <nav class="hidden md:flex gap-1 ml-4 bg-slate-800/50 p-1 rounded-lg">
+                        <button id="nav-inquiries" class="px-4 py-1.5 rounded-md text-sm font-semibold bg-brand-blue text-white shadow transition">Inquiries</button>
+                        <button id="nav-billing" class="px-4 py-1.5 rounded-md text-sm font-semibold text-slate-400 hover:text-white hover:bg-white/10 transition">Billing</button>
+                    </nav>
                 </div>
                 <div class="flex items-center gap-4">
                     <span id="user-display" class="text-xs text-slate-300 hidden sm:block"></span>
@@ -130,47 +140,117 @@
 
         <!-- Main Content -->
         <main class="container mx-auto px-6 pt-24 flex-grow">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
-                <div>
-                    <h1 class="text-2xl font-bold text-brand-900">Inquiry Inbox</h1>
-                    <p class="text-slate-500 text-sm mt-1">Real-time feed of contact form submissions.</p>
-                </div>
-                <div id="stats" class="text-sm font-semibold text-brand-blue bg-blue-50 px-4 py-2 rounded-lg border border-blue-100 shadow-sm">
-                    Connecting...
-                </div>
-            </div>
-
-            <!-- Inquiries Grid -->
-            <div id="inquiries-list" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-12">
-                <!-- Loading State -->
-                <div class="col-span-full flex flex-col items-center justify-center py-20 text-slate-400">
-                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-blue mb-4"></div>
-                    <p>Syncing with secure database...</p>
-                </div>
-            </div>
-
-            <!-- System Status Monitor (Dashboard Version) -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-server text-brand-blue"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" x2="6.01" y1="6" y2="6"/><line x1="6" x2="6.01" y1="18" y2="18"/></svg>
-                    <h3 class="font-bold text-brand-900 text-sm uppercase tracking-wide">Internal Network Status</h3>
-                </div>
-                <div class="p-6">
-                    <div class="system-status-grid flex flex-col gap-6">
-                         <!-- Status Items injected here -->
-                         <span class="text-sm text-slate-400 italic">Initializing monitors...</span>
+            
+            <!-- === VIEW: INQUIRIES === -->
+            <div id="view-inquiries" class="view-section">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-brand-900">Inquiry Inbox</h1>
+                        <p class="text-slate-500 text-sm mt-1">Real-time feed of contact form submissions.</p>
                     </div>
-                    
-                    <div class="mt-6 flex gap-6 text-xs text-slate-400 border-t border-slate-100 pt-4">
-                        <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-green-500"></span> Online
+                    <div id="stats" class="text-sm font-semibold text-brand-blue bg-blue-50 px-4 py-2 rounded-lg border border-blue-100 shadow-sm">
+                        Connecting...
+                    </div>
+                </div>
+
+                <!-- Inquiries Grid -->
+                <div id="inquiries-list" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-12">
+                    <div class="col-span-full flex flex-col items-center justify-center py-20 text-slate-400">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-blue mb-4"></div>
+                        <p>Syncing with secure database...</p>
+                    </div>
+                </div>
+
+                <!-- System Status Monitor (Dashboard Version) -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-server text-brand-blue"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" x2="6.01" y1="6" y2="6"/><line x1="6" x2="6.01" y1="18" y2="18"/></svg>
+                        <h3 class="font-bold text-brand-900 text-sm uppercase tracking-wide">Internal Network Status</h3>
+                    </div>
+                    <div class="p-6">
+                        <div class="system-status-grid flex flex-col gap-6">
+                             <!-- Status Items injected here -->
+                             <span class="text-sm text-slate-400 italic">Initializing monitors...</span>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-yellow-500"></span> Restricted (CORS)
+                        <div class="mt-6 flex gap-6 text-xs text-slate-400 border-t border-slate-100 pt-4">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-green-500"></span> Online
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-yellow-500"></span> Restricted (CORS)
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-red-500"></span> Offline
+                            </div>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-red-500"></span> Offline
+                    </div>
+                </div>
+            </div>
+
+            <!-- === VIEW: BILLING === -->
+            <div id="view-billing" class="view-section hidden">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-brand-900">Billing & Invoices</h1>
+                        <p class="text-slate-500 text-sm mt-1">Manage client payments and generate invoices.</p>
+                    </div>
+                    <button onclick="document.getElementById('invoice-modal').classList.remove('hidden')" class="bg-brand-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                        Create Invoice
+                    </button>
+                </div>
+
+                <!-- Revenue Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+                        <div class="p-3 bg-green-50 rounded-lg text-green-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dollar-sign"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                         </div>
+                        <div>
+                            <p class="text-xs text-slate-500 font-medium uppercase">Total Revenue</p>
+                            <h3 id="stat-revenue" class="text-2xl font-bold text-slate-800">$0.00</h3>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+                        <div class="p-3 bg-blue-50 rounded-lg text-blue-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 font-medium uppercase">Outstanding</p>
+                            <h3 id="stat-outstanding" class="text-2xl font-bold text-slate-800">$0.00</h3>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+                        <div class="p-3 bg-red-50 rounded-lg text-red-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-alert-circle"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y2="16"/></svg>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 font-medium uppercase">Overdue</p>
+                            <h3 id="stat-overdue" class="text-2xl font-bold text-slate-800">0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Invoice List Table -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-slate-50 text-slate-500 uppercase font-semibold text-xs border-b border-slate-200">
+                                <tr>
+                                    <th class="px-6 py-4">Client</th>
+                                    <th class="px-6 py-4">Amount</th>
+                                    <th class="px-6 py-4">Status</th>
+                                    <th class="px-6 py-4">Due Date</th>
+                                    <th class="px-6 py-4 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="invoice-table-body" class="text-slate-700 divide-y divide-slate-100">
+                                <!-- Invoices Injected Here -->
+                                <tr>
+                                    <td colspan="5" class="px-6 py-8 text-center text-slate-400 italic">Loading invoices...</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -178,10 +258,62 @@
         </main>
     </div>
 
+    <!-- Create Invoice Modal -->
+    <div id="invoice-modal" class="fixed inset-0 z-50 hidden" role="dialog">
+        <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" onclick="document.getElementById('invoice-modal').classList.add('hidden')"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4">
+                <div class="relative bg-white rounded-xl shadow-2xl max-w-md w-full p-6 border border-slate-200">
+                    <h3 class="text-lg font-bold text-brand-900 mb-4">Create New Invoice</h3>
+                    <form id="create-invoice-form" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Client Name</label>
+                            <input type="text" id="inv-name" class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-brand-blue outline-none" required placeholder="John Doe">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Client Email</label>
+                            <input type="email" id="inv-email" class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-brand-blue outline-none" required placeholder="john@example.com">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Amount ($)</label>
+                                <input type="number" id="inv-amount" step="0.01" class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-brand-blue outline-none" required placeholder="0.00">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Due Date</label>
+                                <input type="date" id="inv-date" class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-brand-blue outline-none" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Description</label>
+                            <input type="text" id="inv-desc" class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-brand-blue outline-none" required placeholder="Monthly Monitoring - Basic Plan">
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Stripe Link</label>
+                                <input type="url" id="inv-stripe" class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-brand-blue outline-none" placeholder="https://buy.stripe.com/...">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">PayPal Link</label>
+                                <input type="url" id="inv-paypal" class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-brand-blue outline-none" placeholder="https://paypal.me/...">
+                            </div>
+                        </div>
+                        
+                        <div class="pt-2 flex justify-end gap-2">
+                            <button type="button" onclick="document.getElementById('invoice-modal').classList.add('hidden')" class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700">Cancel</button>
+                            <button type="submit" class="px-4 py-2 text-sm font-bold text-white bg-brand-blue hover:bg-sky-600 rounded">Create Invoice</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, signInWithCustomToken, GoogleAuthProvider, signInWithPopup, signInAnonymously } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
-        import { getFirestore, collection, onSnapshot, query, orderBy, doc, deleteDoc } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+        import { getFirestore, collection, onSnapshot, query, orderBy, doc, deleteDoc, addDoc, updateDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
         // 1. Initialize Firebase with PRODUCTION CONFIG
         const firebaseConfig = {
@@ -224,6 +356,37 @@
         const userDisplay = document.getElementById('user-display');
         const googleLoginBtn = document.getElementById('google-login-btn');
 
+        // Navigation Elements
+        const navInquiries = document.getElementById('nav-inquiries');
+        const navBilling = document.getElementById('nav-billing');
+        const viewInquiries = document.getElementById('view-inquiries');
+        const viewBilling = document.getElementById('view-billing');
+
+        // Billing Elements
+        const invoiceTableBody = document.getElementById('invoice-table-body');
+        const createInvoiceForm = document.getElementById('create-invoice-form');
+        const statRevenue = document.getElementById('stat-revenue');
+        const statOutstanding = document.getElementById('stat-outstanding');
+        const statOverdue = document.getElementById('stat-overdue');
+
+        // --- NAVIGATION LOGIC ---
+        function switchView(viewName) {
+            if (viewName === 'inquiries') {
+                viewInquiries.classList.remove('hidden');
+                viewBilling.classList.add('hidden');
+                navInquiries.className = "px-4 py-1.5 rounded-md text-sm font-semibold bg-brand-blue text-white shadow transition";
+                navBilling.className = "px-4 py-1.5 rounded-md text-sm font-semibold text-slate-400 hover:text-white hover:bg-white/10 transition";
+            } else {
+                viewInquiries.classList.add('hidden');
+                viewBilling.classList.remove('hidden');
+                navBilling.className = "px-4 py-1.5 rounded-md text-sm font-semibold bg-brand-blue text-white shadow transition";
+                navInquiries.className = "px-4 py-1.5 rounded-md text-sm font-semibold text-slate-400 hover:text-white hover:bg-white/10 transition";
+            }
+        }
+        navInquiries.addEventListener('click', () => switchView('inquiries'));
+        navBilling.addEventListener('click', () => switchView('billing'));
+
+
         // --- SYSTEM STATUS MONITOR CONFIGURATION ---
         const monitoredSystems = [
             {
@@ -246,17 +409,10 @@
             }
         ];
 
-        // 3. Auth Logic
-        // REMOVED initAuth() that used __initial_auth_token.
-        // Reason: The token provided by the environment does not match the hardcoded Production Project ID,
-        // triggering a "custom-token-mismatch" error. Users must log in manually.
-
         onAuthStateChanged(auth, async (user) => {
             if (user && !user.isAnonymous) {
-                // SECURITY CHECK: Is this user allowed?
                 const email = user.email.toLowerCase();
                 if (!ALLOWED_ADMINS.includes(email) && ALLOWED_ADMINS.length > 0) {
-                    console.warn("Unauthorized access attempt by:", email);
                     await signOut(auth);
                     loginErrorText.textContent = "Access Denied: You are not an authorized administrator.";
                     loginError.classList.remove('hidden');
@@ -270,13 +426,12 @@
                 dashboardView.classList.remove('hidden');
                 
                 startListeningForData();
+                startListeningForInvoices(); // Start Billing Listener
             } else {
-                // Logged out
                 loginView.classList.remove('hidden');
                 dashboardView.classList.add('hidden');
                 listElement.innerHTML = ''; 
             }
-            // Always check health, even on login screen
             checkSystemHealth();
         });
 
@@ -285,56 +440,176 @@
             const provider = new GoogleAuthProvider();
             try {
                 await signInWithPopup(auth, provider);
-                // onAuthStateChanged handles the rest
             } catch (error) {
                 console.error("Google Auth Error:", error);
-                loginErrorText.textContent = "Google Sign-In failed. Ensure 'Google' provider is enabled in Firebase Console.";
+                loginErrorText.textContent = "Google Sign-In failed.";
                 loginError.classList.remove('hidden');
             }
         });
 
-        // 4. Data Listener
+        // 4. Data Listener (Inquiries)
         let unsubscribeSnapshot = null;
-
         function startListeningForData() {
             if(unsubscribeSnapshot) return; 
-
-            // Use the Project ID in the path as per your custom rules
             const q = collection(db, 'artifacts', appId, 'public', 'data', 'contact_inquiries');
-
             unsubscribeSnapshot = onSnapshot(q, (snapshot) => {
                 if (snapshot.empty) {
-                    listElement.innerHTML = `
-                        <div class="col-span-full flex flex-col items-center justify-center py-24 text-slate-500 bg-white/50 rounded-3xl border-4 border-dotted border-slate-200">
-                            <div class="bg-white p-6 rounded-full shadow-sm mb-6">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-inbox text-brand-blue/60"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
-                            </div>
-                            <h3 class="text-3xl font-bold text-slate-700 tracking-tight">All Caught Up!</h3>
-                            <p class="text-lg text-slate-400 mt-2 font-medium">Inbox is empty. Listening for new leads...</p>
-                        </div>
-                    `;
+                    listElement.innerHTML = `<div class="col-span-full py-20 text-center text-slate-400">No new inquiries.</div>`;
                     statsElement.innerText = "0 Messages";
                     return;
                 }
-
                 statsElement.innerText = `${snapshot.docs.length} Active Message${snapshot.docs.length === 1 ? '' : 's'}`;
                 listElement.innerHTML = ''; 
+                const sortedDocs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+                sortedDocs.forEach(data => listElement.appendChild(createInquiryCard(data)));
+                lucide.createIcons();
+            }, (error) => console.error("Data Fetch Error:", error));
+        }
 
-                const sortedDocs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-                                               .sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+        // --- BILLING LOGIC ---
+        let unsubscribeBilling = null;
+        function startListeningForInvoices() {
+            if(unsubscribeBilling) return;
+            const q = collection(db, 'artifacts', appId, 'public', 'data', 'invoices');
+            
+            unsubscribeBilling = onSnapshot(q, (snapshot) => {
+                invoiceTableBody.innerHTML = '';
+                
+                if (snapshot.empty) {
+                    invoiceTableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-slate-400">No invoices found. Create one to get started.</td></tr>`;
+                    updateBillingStats([]);
+                    return;
+                }
 
-                sortedDocs.forEach(data => {
-                    const card = createInquiryCard(data);
-                    listElement.appendChild(card);
+                const invoices = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+                                              .sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                updateBillingStats(invoices);
+
+                invoices.forEach(inv => {
+                    const row = document.createElement('tr');
+                    row.className = "hover:bg-slate-50 transition border-b border-slate-50 last:border-0";
+                    
+                    let statusColor = "bg-slate-100 text-slate-600";
+                    if(inv.status === 'Paid') statusColor = "bg-emerald-100 text-emerald-700";
+                    if(inv.status === 'Overdue') statusColor = "bg-red-100 text-red-700";
+                    
+                    const isOverdue = inv.status !== 'Paid' && new Date(inv.dueDate) < new Date();
+                    const statusDisplay = isOverdue ? 'Overdue' : inv.status;
+                    const finalColor = isOverdue ? "bg-red-100 text-red-700" : statusColor;
+
+                    // Payment link logic
+                    let paymentText = '%0D%0A%0D%0APayment Options:%0D%0A';
+                    if (inv.stripeLink) paymentText += `• Pay Securely via Card (Stripe): ${encodeURIComponent(inv.stripeLink)}%0D%0A`;
+                    if (inv.paypalLink) paymentText += `• Pay via PayPal: ${encodeURIComponent(inv.paypalLink)}%0D%0A`;
+                    if (!inv.stripeLink && !inv.paypalLink && inv.paymentLink) paymentText += `• Pay Now: ${encodeURIComponent(inv.paymentLink)}%0D%0A`; // Legacy fallback
+                    if (!inv.stripeLink && !inv.paypalLink && !inv.paymentLink) paymentText += '• Please pay via Bank Transfer.%0D%0A';
+
+                    // Construct Action Buttons
+                    let linkIcons = '';
+                    if (inv.stripeLink) {
+                        linkIcons += `<button onclick="navigator.clipboard.writeText('${inv.stripeLink}'); alert('Stripe link copied!');" class="p-1 hover:bg-indigo-50 text-indigo-400 hover:text-indigo-600 rounded" title="Copy Stripe Link"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-credit-card"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg></button>`;
+                    }
+                    if (inv.paypalLink) {
+                        linkIcons += `<button onclick="navigator.clipboard.writeText('${inv.paypalLink}'); alert('PayPal link copied!');" class="p-1 hover:bg-blue-50 text-blue-400 hover:text-blue-600 rounded" title="Copy PayPal Link"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-wallet"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg></button>`;
+                    }
+                    // Legacy Fallback for "Payment Link"
+                    if (!linkIcons && inv.paymentLink) {
+                         linkIcons += `<button onclick="navigator.clipboard.writeText('${inv.paymentLink}'); alert('Payment link copied!');" class="p-1 hover:bg-slate-100 text-slate-400 hover:text-brand-blue rounded" title="Copy Link"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>`;
+                    }
+
+                    row.innerHTML = `
+                        <td class="px-6 py-4 font-medium text-slate-900">
+                            ${escapeHtml(inv.clientName)}
+                            <div class="text-xs text-slate-400 font-normal">${escapeHtml(inv.clientEmail)}</div>
+                        </td>
+                        <td class="px-6 py-4">$${parseFloat(inv.amount).toFixed(2)}</td>
+                        <td class="px-6 py-4"><span class="px-2 py-1 rounded text-xs font-bold ${finalColor}">${statusDisplay}</span></td>
+                        <td class="px-6 py-4 text-slate-500">${inv.dueDate}</td>
+                        <td class="px-6 py-4 text-right flex justify-end gap-2">
+                            ${linkIcons}
+                            ${inv.status !== 'Paid' ? `<button onclick="markAsPaid('${inv.id}')" class="p-1 hover:bg-emerald-50 text-emerald-600 rounded" title="Mark Paid"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check"><path d="M20 6 9 17l-5-5"/></svg></button>` : ''}
+                            <a href="mailto:${inv.clientEmail}?subject=Invoice from Guardian Eye&body=Hi ${inv.clientName},%0D%0A%0D%0APlease find attached invoice details.%0D%0AAmount Due: $${inv.amount}%0D%0ADue Date: ${inv.dueDate}${paymentText}%0D%0A%0D%0ARegards,%0D%0AGuardian Eye Team" class="p-1 hover:bg-blue-50 text-blue-600 rounded" title="Email Invoice"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/></svg></a>
+                            <button onclick="deleteInvoice('${inv.id}')" class="p-1 hover:bg-red-50 text-red-400 rounded" title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg></button>
+                        </td>
+                    `;
+                    invoiceTableBody.appendChild(row);
                 });
                 lucide.createIcons();
-            }, (error) => {
-                console.error("Data Fetch Error:", error);
-                if(error.code === 'permission-denied') {
-                    statsElement.innerText = "Access Denied";
-                }
             });
         }
+
+        function updateBillingStats(invoices) {
+            let revenue = 0;
+            let outstanding = 0;
+            let overdueCount = 0;
+
+            invoices.forEach(inv => {
+                const amt = parseFloat(inv.amount) || 0;
+                const isOverdue = inv.status !== 'Paid' && new Date(inv.dueDate) < new Date();
+                
+                if (inv.status === 'Paid') {
+                    revenue += amt;
+                } else {
+                    outstanding += amt;
+                    if(isOverdue) overdueCount++;
+                }
+            });
+
+            statRevenue.innerText = `$${revenue.toFixed(2)}`;
+            statOutstanding.innerText = `$${outstanding.toFixed(2)}`;
+            statOverdue.innerText = overdueCount;
+        }
+
+        // Global functions for inline HTML events
+        window.markAsPaid = async (id) => {
+            if(confirm('Mark this invoice as PAID?')) {
+                try {
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'invoices', id), { status: 'Paid' });
+                } catch(e) { alert("Error updating invoice: " + e.message); }
+            }
+        };
+
+        window.deleteInvoice = async (id) => {
+            if(confirm('Delete this invoice permanently?')) {
+                try {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'invoices', id));
+                } catch(e) { alert("Error deleting invoice: " + e.message); }
+            }
+        };
+
+        createInvoiceForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerText;
+            btn.disabled = true;
+            btn.innerText = "Saving...";
+
+            try {
+                const newInvoice = {
+                    clientName: document.getElementById('inv-name').value,
+                    clientEmail: document.getElementById('inv-email').value,
+                    amount: document.getElementById('inv-amount').value,
+                    dueDate: document.getElementById('inv-date').value,
+                    description: document.getElementById('inv-desc').value,
+                    stripeLink: document.getElementById('inv-stripe').value,
+                    paypalLink: document.getElementById('inv-paypal').value,
+                    status: 'Pending',
+                    createdAt: serverTimestamp()
+                };
+
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'invoices'), newInvoice);
+                
+                document.getElementById('invoice-modal').classList.add('hidden');
+                createInvoiceForm.reset();
+            } catch (error) {
+                console.error("Error adding invoice: ", error);
+                alert("Failed to create invoice.");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = originalText;
+            }
+        });
 
         // --- STATUS MONITOR LOGIC (Parallel & Fast) ---
         function checkSystemHealth() {

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Services | Guardian Eye Monitoring</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }</style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2">
+                <i class="lucide lucide-shield-check text-brand-blue h-8 w-8"></i>
+                <span class="font-bold text-xl text-slate-900">Guardian<span class="text-blue-600">Eye</span></span>
+            </a>
+            <nav class="hidden md:flex gap-6">
+                <a href="index.html" class="text-slate-600 hover:text-blue-600 font-medium">Home</a>
+                <a href="#cctv" class="text-slate-600 hover:text-blue-600 font-medium">CCTV</a>
+                <a href="#alarms" class="text-slate-600 hover:text-blue-600 font-medium">Alarms</a>
+                <a href="#access" class="text-slate-600 hover:text-blue-600 font-medium">Access Control</a>
+                <a href="index.html#contact" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Get Quote</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="bg-slate-900 text-white py-16 text-center">
+        <h1 class="text-4xl font-bold mb-4">Comprehensive Security Solutions</h1>
+        <p class="text-slate-400">Protecting your home and business with A1 Graded monitoring.</p>
+    </div>
+
+    <div class="container mx-auto px-6 py-12 space-y-24">
+        
+        <!-- CCTV Section -->
+        <section id="cctv" class="grid md:grid-cols-2 gap-12 items-center pt-8">
+            <div>
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 mb-6">
+                    <i class="lucide lucide-eye h-6 w-6"></i>
+                </div>
+                <h2 class="text-3xl font-bold mb-4">Live Video Verification</h2>
+                <p class="text-lg text-slate-600 mb-6">
+                    Traditional alarms only tell you something happened. Video verification tells you *what* is happening. 
+                    Our operators can see live footage when your alarm triggers, allowing us to:
+                </p>
+                <ul class="space-y-3 mb-8">
+                    <li class="flex items-center gap-3"><i class="lucide lucide-check text-green-500"></i> Verify intruders vs. false alarms</li>
+                    <li class="flex items-center gap-3"><i class="lucide lucide-check text-green-500"></i> Dispatch police for confirmed crimes in progress</li>
+                    <li class="flex items-center gap-3"><i class="lucide lucide-check text-green-500"></i> Save you money on patrol call-out fees</li>
+                </ul>
+            </div>
+            <div class="bg-gray-200 h-80 rounded-xl flex items-center justify-center text-gray-400">
+                <i class="lucide lucide-camera h-24 w-24"></i>
+            </div>
+        </section>
+
+        <!-- Alarms Section -->
+        <section id="alarms" class="grid md:grid-cols-2 gap-12 items-center">
+            <div class="order-2 md:order-1 bg-gray-200 h-80 rounded-xl flex items-center justify-center text-gray-400">
+                <i class="lucide lucide-bell-ring h-24 w-24"></i>
+            </div>
+            <div class="order-1 md:order-2">
+                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center text-red-600 mb-6">
+                    <i class="lucide lucide-shield-alert h-6 w-6"></i>
+                </div>
+                <h2 class="text-3xl font-bold mb-4">24/7 Alarm Monitoring</h2>
+                <p class="text-lg text-slate-600 mb-6">
+                    We never sleep so you can. Our A1 Grade Control Room monitors your property 24 hours a day, 365 days a year.
+                </p>
+                <ul class="space-y-3 mb-8">
+                    <li class="flex items-center gap-3"><i class="lucide lucide-check text-green-500"></i> Instant response to intrusion signals</li>
+                    <li class="flex items-center gap-3"><i class="lucide lucide-check text-green-500"></i> Fire and Smoke detection monitoring</li>
+                    <li class="flex items-center gap-3"><i class="lucide lucide-check text-green-500"></i> Medical alert and duress capability</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Access Control & Intercoms -->
+        <section id="access" class="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600 mb-6">
+                    <i class="lucide lucide-key h-6 w-6"></i>
+                </div>
+                <h2 class="text-3xl font-bold mb-4">Access Control & Intercoms</h2>
+                <p class="text-lg text-slate-600 mb-6">
+                    Control who enters your business. From single-door retail shops to multi-story office buildings, we provide scalable access solutions.
+                </p>
+                <ul class="space-y-3 mb-8">
+                    <li class="flex items-center gap-3"><i class="lucide lucide-check text-green-500"></i> Keycard and Fob systems</li>
+                    <li class="flex items-center gap-3"><i class="lucide lucide-check text-green-500"></i> Video Intercoms with smartphone integration</li>
+                    <li class="flex items-center gap-3"><i class="lucide lucide-check text-green-500"></i> Remote door release for deliveries</li>
+                </ul>
+            </div>
+            <div class="bg-gray-200 h-80 rounded-xl flex items-center justify-center text-gray-400">
+                <i class="lucide lucide-lock h-24 w-24"></i>
+            </div>
+        </section>
+
+        <!-- Bureau Services -->
+        <section id="bureau" class="bg-blue-50 p-12 rounded-3xl text-center">
+             <h2 class="text-3xl font-bold mb-4 text-slate-900">For Installers: Bureau Services</h2>
+             <p class="text-slate-600 max-w-2xl mx-auto mb-8">
+                 Are you a security installer? Partner with Guardian Eye to offer premium monitoring to your clients. We handle the 24/7 backend; you keep the client relationship.
+             </p>
+             <a href="index.html#contact" class="bg-slate-900 text-white px-8 py-3 rounded-lg font-bold hover:bg-slate-800 transition">Become a Partner</a>
+        </section>
+
+    </div>
+
+    <footer class="bg-slate-900 text-slate-500 py-8 text-center text-sm mt-12">
+        <p>&copy; 2025 Guardian Eye Monitoring. All rights reserved.</p>
+    </footer>
+    <script>lucide.createIcons();</script>
+</body>
+</html>
